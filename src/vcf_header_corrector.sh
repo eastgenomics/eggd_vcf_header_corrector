@@ -49,14 +49,44 @@ main() {
     # but you can change that behavior to suit your needs.  Run "dx upload -h"
     # to see more options to set metadata.
 
+    # add tags required for openCGA
+	# write these to separate filtered but unannotated VCFs for uploading
+	mark-section "Adding SAMPLE tags to VCF headers"
+	sample_id=$(echo $mutect2_input | cut -d'-' -f1)  # the id to add to the vcfs
+
+	# add sample id to mutect2 vcf on line before ##tumour_sample in header
+	# no SAMPLE line already present so create one from full name and ID we want
+	mutect2_column_name=$(grep "#CHROM" "$splitfile" | cut -f10)
+	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
+
+	zgrep "^#" "$splitfile" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
+	bcftools reheader -h mutect2.header "$splitfile" > "${mutect2_vcf_prefix}.opencga.vcf"
+
+	# sense check in logs it looks correct
+	zgrep "^#" "${mutect2_vcf_prefix}.opencga.vcf"
+
+	# modify SampleName for tumour sample line to correctly link to our sample ID
+	tumour_sample=$(grep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input")
+	header_line=$(sed s"/SampleName=[A-Za-z0-9\_\-]*/SampleName=${sample_id}/" <<< $tumour_sample)
+
+	zgrep "^#" "$cgppindel_input" \
+		| sed s"/^##SAMPLE=<ID=TUMOUR.*/${header_line}/" > pindel.header
+
+	bcftools reheader -h pindel.header "$cgppindel_input" > "${pindel_vcf_prefix}.opencga.vcf"
+
+	# sense check in logs it looks correct
+	zgrep '^#' "${pindel_vcf_prefix}.opencga.vcf"
+
+
     mutect2_output=$(dx upload mutect2_output --brief)
     cgppindel_output=$(dx upload cgppindel_output --brief)
+
+    # todo ensure this outputs correctly
 
     # The following line(s) use the utility dx-jobutil-add-output to format and
     # add output variables to your job's output as appropriate for the output
     # class.  Run "dx-jobutil-add-output -h" for more information on what it
     # does.
-
     dx-jobutil-add-output mutect2_output "$mutect2_output" --class=file
     dx-jobutil-add-output cgppindel_output "$cgppindel_output" --class=file
 }
