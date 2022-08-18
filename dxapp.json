@@ -53,7 +53,7 @@
       }
     },
     "interpreter": "bash",
-    "file": "src/vcf_header_corrector.sh",
+    "file": "src/code.sh",
     "distribution": "Ubuntu",
     "release": "20.04",
     "version": "0"
