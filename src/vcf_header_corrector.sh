@@ -56,11 +56,11 @@ main() {
 
 	# add sample id to mutect2 vcf on line before ##tumour_sample in header
 	# no SAMPLE line already present so create one from full name and ID we want
-	mutect2_column_name=$(grep "#CHROM" "$splitfile" | cut -f10)
+	mutect2_column_name=$(grep "#CHROM" "$mutect2_input" | cut -f10)
 	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
 
-	zgrep "^#" "$splitfile" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
-	bcftools reheader -h mutect2.header "$splitfile" > "${mutect2_vcf_prefix}.opencga.vcf"
+	zgrep "^#" "$mutect2_input" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
+	bcftools reheader -h mutect2.header "$mutect2_input" > "${mutect2_vcf_prefix}.opencga.vcf"
 
 	# sense check in logs it looks correct
 	zgrep "^#" "${mutect2_vcf_prefix}.opencga.vcf"
@@ -80,8 +80,6 @@ main() {
 
     mutect2_output=$(dx upload mutect2_output --brief)
     cgppindel_output=$(dx upload cgppindel_output --brief)
-
-    # todo ensure this outputs correctly
 
     # The following line(s) use the utility dx-jobutil-add-output to format and
     # add output variables to your job's output as appropriate for the output
