@@ -26,8 +26,8 @@ main() {
 	#setting output prefixes and names
 	mutect2_input_prefix=$(echo "$mutect2_input_name" | cut -d'.' -f1)
 	cgppindel_input_prefix=$(echo "$cgppindel_input_name" | cut -d'.' -f1)
-	mutect2_output="${mutect2_input_prefix}.opencga.vcf"
-	cgppindel_output="${cgppindel_input_prefix}.opencga.vcf"
+	mutect2_output="${mutect2_input_prefix}.opencga.vcf.gz"
+	cgppindel_output="${cgppindel_input_prefix}.opencga.vcf.gz"
 
 	zgrep "^#" "$mutect2_input_path" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
 	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_output}"
