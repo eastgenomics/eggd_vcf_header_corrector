@@ -38,10 +38,10 @@ main() {
 	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
 
 	zgrep "^#" "$mutect2_input_path" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
-	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_vcf_prefix}.opencga.vcf"
+	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_input_prefix}.opencga.vcf"
 
 	# sense check in logs it looks correct
-	zgrep "^#" "${mutect2_vcf_prefix}.opencga.vcf"
+	zgrep "^#" "${mutect2_input_prefix}.opencga.vcf"
 
 	# modify SampleName for tumour sample line to correctly link to our sample ID
 	tumour_sample=$(zgrep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input_path")
@@ -50,25 +50,17 @@ main() {
 	zgrep "^#" "$cgppindel_input_path" \
 		| sed s"/^##SAMPLE=<ID=TUMOUR.*/${header_line}/" > pindel.header
 
-	bcftools reheader -h pindel.header "$cgppindel_input_path" > "${pindel_vcf_prefix}.opencga.vcf"
+	bcftools reheader -h pindel.header "$cgppindel_input_path" > "${pindel_input_prefix}.opencga.vcf"
 	# sense check in logs it looks correct
-	zgrep '^#' "${pindel_vcf_prefix}.opencga.vcf"
+	zgrep '^#' "${pindel_input_prefix}.opencga.vcf"
 
 	mark-section "Preparing the outputs for upload"
-    mutect2_output=$(dx upload mutect2_output --brief)
-    cgppindel_output=$(dx upload cgppindel_output --brief)
 
-    # The following line(s) use the utility dx-jobutil-add-output to format and
-    # add output variables to your job's output as appropriate for the output
-    # class.  Run "dx-jobutil-add-output -h" for more information on what it
-    # does.
-    dx-jobutil-add-output mutect2_output "$mutect2_output" --class=file
-    dx-jobutil-add-output cgppindel_output "$cgppindel_output" --class=file
+    mkdir -p ~/out/mutect2_opencga_vcf ~/out/cgppindel_opencga_vcf
+	mv ~/"${mutect2_input_prefix}.opencga.vcf" ~/out/mutect2_opencga_vcf/
+	mv ~/"${pindel_input_prefix}.opencga.vcf" ~/out/cgppindel_opencga_vcf/
 
     # Upload the outputs
-    mkdir -p ~/out
-    mv ~/"${mutect2_output}" ~/out/"${mutect2_output}"
-    mv ~/"${cgppindel_output}" ~/out/"${cgppindel_output}"
     dx-upload-all-outputs --parallel
     mark-success
 }
