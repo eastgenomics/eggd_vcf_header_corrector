@@ -40,14 +40,14 @@ main() {
 	#setting output prefixes and names
 	mutect2_input_prefix=$(echo "$mutect2_input_name" | cut -d'.' -f1)
 	cgppindel_input_prefix=$(echo "$cgppindel_input_name" | cut -d'.' -f1)
-	mutect2_out="${mutect2_input_prefix}.opencga.vcf"
-	cgppindel_out="${cgppindel_input_prefix}.opencga.vcf"
+	mutect2_output="${mutect2_input_prefix}.opencga.vcf"
+	cgppindel_output="${cgppindel_input_prefix}.opencga.vcf"
 
 	zgrep "^#" "$mutect2_input_path" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
-	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_out}"
+	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_output}"
 
 	# sense check in logs it looks correct
-	zgrep "^#" "${mutect2_out}"
+	zgrep "^#" "${mutect2_output}"
 
 	# modify SampleName for tumour sample line to correctly link to our sample ID
 	tumour_sample=$(zgrep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input_path")
@@ -56,17 +56,17 @@ main() {
 	zgrep "^#" "$cgppindel_input_path" \
 		| sed s"/^##SAMPLE=<ID=TUMOUR.*/${header_line}/" > pindel.header
 
-	bcftools reheader -h pindel.header "$cgppindel_input_path" > "${cgppindel_out}"
+	bcftools reheader -h pindel.header "$cgppindel_input_path" > "${cgppindel_output}"
 	# sense check in logs it looks correct
-	zgrep '^#' "${cgppindel_out_suffix}"
+	zgrep '^#' "${cgppindel_output}"
 
 	mark-section "Preparing the outputs for upload"
 
-    mkdir -p ~/out/mutect2_opencga_vcf ~/out/cgppindel_opencga_vcf
-	mv ~/"${mutect2_out}" ~/out/mutect2_opencga_vcf/
-	mv ~/"${cgppindel_out}" ~/out/cgppindel_opencga_vcf/
+    mkdir -p ~/out/mutect2_output ~/out/cgppindel_output
+	mv ~/"${mutect2_output}" ~/out/mutect2_output/
+	mv ~/"${cgppindel_output}" ~/out/cgppindel_output/
 
     # Upload the outputs
-    dx-upload-all-outputs --parallel
-    mark-success
+	dx-upload-all-outputs
+	mark-success
 }
