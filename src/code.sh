@@ -34,9 +34,10 @@ main() {
 
 	# add sample id to mutect2 vcf on line before ##tumour_sample in header
 	# no SAMPLE line already present so create one from full name and ID we want
-	mutect2_column_name=$(grep "#CHROM" "$mutect2_input_path" | cut -f10)
+	mutect2_column_name=$(zgrep "#CHROM" "$mutect2_input_path" | cut -f10)
 	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
 
+	mark-section "TEST: Actual reheader bit"
 	zgrep "^#" "$mutect2_input" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
 	bcftools reheader -h mutect2.header "$mutect2_input" > "${mutect2_vcf_prefix}.opencga.vcf"
 
