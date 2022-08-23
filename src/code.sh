@@ -34,7 +34,7 @@ main() {
 
 	# add sample id to mutect2 vcf on line before ##tumour_sample in header
 	# no SAMPLE line already present so create one from full name and ID we want
-	mutect2_column_name=$(grep "#CHROM" "$mutect2_input" | cut -f10)
+	mutect2_column_name=$(grep "#CHROM" "$mutect2_input_path" | cut -f10)
 	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
 
 	zgrep "^#" "$mutect2_input" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
@@ -51,7 +51,6 @@ main() {
 		| sed s"/^##SAMPLE=<ID=TUMOUR.*/${header_line}/" > pindel.header
 
 	bcftools reheader -h pindel.header "$cgppindel_input" > "${pindel_vcf_prefix}.opencga.vcf"
-
 	# sense check in logs it looks correct
 	zgrep '^#' "${pindel_vcf_prefix}.opencga.vcf"
 
