@@ -37,21 +37,20 @@ main() {
 	mutect2_column_name=$(zgrep "#CHROM" "$mutect2_input_path" | cut -f10)
 	sample_field="##SAMPLE=<ID=${mutect2_column_name},SampleName=${sample_id}>"
 
-	mark-section "TEST: Actual reheader bit"
-	zgrep "^#" "$mutect2_input" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
-	bcftools reheader -h mutect2.header "$mutect2_input" > "${mutect2_vcf_prefix}.opencga.vcf"
+	zgrep "^#" "$mutect2_input_path" | sed s"/^##tumor_sample/${sample_field}\n&/" > mutect2.header
+	bcftools reheader -h mutect2.header "$mutect2_input_path" > "${mutect2_vcf_prefix}.opencga.vcf"
 
 	# sense check in logs it looks correct
 	zgrep "^#" "${mutect2_vcf_prefix}.opencga.vcf"
 
 	# modify SampleName for tumour sample line to correctly link to our sample ID
-	tumour_sample=$(grep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input")
+	tumour_sample=$(grep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input_path")
 	header_line=$(sed s"/SampleName=[A-Za-z0-9\_\-]*/SampleName=${sample_id}/" <<< $tumour_sample)
 
-	zgrep "^#" "$cgppindel_input" \
+	zgrep "^#" "$cgppindel_input_path" \
 		| sed s"/^##SAMPLE=<ID=TUMOUR.*/${header_line}/" > pindel.header
 
-	bcftools reheader -h pindel.header "$cgppindel_input" > "${pindel_vcf_prefix}.opencga.vcf"
+	bcftools reheader -h pindel.header "$cgppindel_input_path" > "${pindel_vcf_prefix}.opencga.vcf"
 	# sense check in logs it looks correct
 	zgrep '^#' "${pindel_vcf_prefix}.opencga.vcf"
 
