@@ -44,7 +44,7 @@ main() {
 	zgrep "^#" "${mutect2_vcf_prefix}.opencga.vcf"
 
 	# modify SampleName for tumour sample line to correctly link to our sample ID
-	tumour_sample=$(grep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input_path")
+	tumour_sample=$(zgrep "##SAMPLE=<ID=TUMOUR" "$cgppindel_input_path")
 	header_line=$(sed s"/SampleName=[A-Za-z0-9\_\-]*/SampleName=${sample_id}/" <<< $tumour_sample)
 
 	zgrep "^#" "$cgppindel_input_path" \
@@ -54,7 +54,7 @@ main() {
 	# sense check in logs it looks correct
 	zgrep '^#' "${pindel_vcf_prefix}.opencga.vcf"
 
-
+	mark-section "Preparing the outputs for upload"
     mutect2_output=$(dx upload mutect2_output --brief)
     cgppindel_output=$(dx upload cgppindel_output --brief)
 
