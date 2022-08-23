@@ -24,13 +24,13 @@ main() {
 
 	export BCFTOOLS_PLUGINS=/usr/local/libexec/bcftools/
 
-    dx download "$mutect2_input" -o mutect2_input
-    dx download "$cgppindel_input" -o cgppindel_input
+    mark-section "downloading inputs"
+	time dx-download-all-inputs --parallel
 
     # add tags required for openCGA
 	# write these to separate filtered but unannotated VCFs for uploading
 	mark-section "Adding SAMPLE tags to VCF headers"
-	sample_id=$(echo $mutect2_input | cut -d'-' -f1)  # the id to add to the vcfs
+	sample_id=$(echo "$mutect2_input" | cut -d'-' -f2)  # the id to add to the vcfs
 
 	# add sample id to mutect2 vcf on line before ##tumour_sample in header
 	# no SAMPLE line already present so create one from full name and ID we want
