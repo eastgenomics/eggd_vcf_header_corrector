@@ -3,7 +3,7 @@
   "title": "VCF Header Corrector",
   "summary": "Adjusts the headers of VCF files produced by Mutect2 and cpgPindel.",
   "dxapi": "1.0.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "inputSpec": [
     {
       "name": "mutect2_input",
@@ -66,6 +66,12 @@
       }
     ]
   },
+  "developers":[
+    "org-emee_1"
+  ],
+  "authorizedUsers": [
+    "org-emee_1"
+  ],
   "regionalOptions": {
     "aws:eu-central-1": {
       "systemRequirements": {
