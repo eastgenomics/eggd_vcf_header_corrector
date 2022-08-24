@@ -3,7 +3,7 @@
   "title": "VCF Header Corrector",
   "summary": "Adjusts the headers of VCF files produced by Mutect2 and cpgPindel.",
   "dxapi": "1.0.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "inputSpec": [
     {
       "name": "mutect2_input",
@@ -53,11 +53,25 @@
       }
     },
     "interpreter": "bash",
-    "file": "src/vcf_header_corrector.sh",
+    "file": "src/code.sh",
     "distribution": "Ubuntu",
     "release": "20.04",
-    "version": "0"
+    "version": "0",
+    "assetDepends": [
+      {
+        "name": "htslib",
+        "project": "project-Fkb6Gkj433GVVvj73J7x8KbV",
+        "folder": "/app_assets/htslib/htslib_v1.15.0",
+        "version": "1.15.0"
+      }
+    ]
   },
+  "developers":[
+    "org-emee_1"
+  ],
+  "authorizedUsers": [
+    "org-emee_1"
+  ],
   "regionalOptions": {
     "aws:eu-central-1": {
       "systemRequirements": {
