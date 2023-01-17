@@ -1,7 +1,7 @@
 {
-  "name": "vcf_header_corrector",
-  "title": "VCF Header Corrector",
-  "summary": "Adjusts the headers of VCF files produced by Mutect2 and cpgPindel.",
+  "name": "eggd_vcf_header_corrector",
+  "title": "eggd_vcf_header_corrector",
+  "summary": "Adjusts the headers of VCF files produced by Mutect2 and cgpPindel.",
   "dxapi": "1.0.0",
   "version": "1.0.0",
   "inputSpec": [
