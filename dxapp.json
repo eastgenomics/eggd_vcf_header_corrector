@@ -3,7 +3,7 @@
   "title": "eggd_vcf_header_corrector",
   "summary": "Adjusts the headers of VCF files produced by Mutect2 and cgpPindel.",
   "dxapi": "1.0.0",
-  "version": "1.0.0",
+  "version":"1.0.1",
   "inputSpec": [
     {
       "name": "mutect2_input",
