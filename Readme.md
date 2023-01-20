@@ -1,5 +1,4 @@
-<!-- dx-header -->
-# VCF Header Corrector (DNAnexus Platform App)
+# eggd vcf header corrector (DNAnexus Platform App)
 
 ## What does this app do?
 This app adds a sample's ID number to the headers of compressed Mutect2 and cgpPindel VCF files, generating a new file for each.
